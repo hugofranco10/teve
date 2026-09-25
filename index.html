@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mi TV</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #f2f2f2;
+
+            color: #222;
+
+            overflow: hidden;
+        }
+
+
+        /* =========================
+           APLICACIÓN
+        ========================= */
+
+        .app {
+            display: flex;
+
+            width: 100vw;
+            height: 100vh;
+        }
+
+
+        /* =========================
+           BARRA DE CANALES
+        ========================= */
+
+        .channels {
+            width: 120px;
+
+            flex-shrink: 0;
+
+            background: #ffffff;
+
+            border-right: 1px solid #ddd;
+
+            overflow-y: auto;
+
+            text-align: center;
+        }
+
+
+        /* TÍTULO */
+
+        .channels h1 {
+            margin: 0;
+
+            padding: 12px 5px;
+
+            font-size: 15px;
+
+            border-bottom: 1px solid #ddd;
+        }
+
+
+        /* CANAL */
+
+        .channel {
+            padding: 10px 5px;
+
+            cursor: pointer;
+
+            border-bottom: 1px solid #eee;
+
+            transition: background 0.15s;
+        }
+
+
+        .channel:hover {
+            background: #f1f1f1;
+        }
+
+
+        .channel.active {
+            background: #e5e5e5;
+
+            font-weight: bold;
+
+            border-left: 4px solid #e50914;
+        }
+
+
+        /* LOGO */
+
+        .channel-logo {
+            width: 60px;
+            height: 60px;
+
+            margin: 0 auto 6px;
+
+            border-radius: 8px;
+
+            object-fit: contain;
+
+            display: block;
+        }
+
+
+        /* NOMBRE */
+
+        .channel-name {
+            font-size: 12px;
+
+            line-height: 15px;
+
+            word-break: break-word;
+        }
+
+
+        /* =========================
+           CONTENIDO PRINCIPAL
+        ========================= */
+
+        .main {
+            flex: 1;
+
+            min-width: 0;
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        /* =========================
+           CABECERA
+        ========================= */
+
+        .header {
+            height: 42px;
+
+            flex-shrink: 0;
+
+            background: white;
+
+            border-bottom: 1px solid #ddd;
+
+            display: flex;
+
+            align-items: center;
+
+            padding: 0 12px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           REPRODUCTOR
+        ========================= */
+
+        .player-container {
+            flex: 1;
+
+            min-height: 0;
+
+            padding: 5px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        .player {
+            width: 100%;
+
+            height: 100%;
+
+            background: black;
+        }
+
+
+        .player iframe {
+            width: 100%;
+
+            height: 100%;
+
+            border: 0;
+        }
+
+
+        /* =========================
+           MÓVILES
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .channels {
+                width: 90px;
+            }
+
+
+            .channel-logo {
+                width: 48px;
+                height: 48px;
+            }
+
+
+            .channel-name {
+                font-size: 11px;
+
+                line-height: 13px;
+            }
+
+
+            .header {
+                height: 38px;
+
+                font-size: 14px;
+            }
+
+
+            .player-container {
+                padding: 3px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <!-- =========================
+         CANALES
+    ========================== -->
+
+    <aside class="channels">
+
+        <h1>📺 TV</h1>
+
+        <div id="channelList"></div>
+
+    </aside>
+
+
+
+    <!-- =========================
+         CONTENIDO
+    ========================== -->
+
+    <main class="main">
+
+
+        <header class="header">
+
+            <span id="channelName">
+                Cargando...
+            </span>
+
+        </header>
+
+
+        <div class="player-container">
+
+            <div
+                class="player"
+                id="player">
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+
+<script>
+
+
+/*
+    =========================================
+    CANALES
+    =========================================
+
+    "name"      = nombre del canal
+
+    "youtubeId" = ID del vídeo/directo
+
+    "logo"      = imagen del canal
+
+
+    Ejemplo de YouTube:
+
+    https://www.youtube.com/watch?v=ABC123
+
+    youtubeId:
+
+    ABC123
+*/
+
+
+const channels = [
+
+
+    {
+        name: "Canal de la ciudad",
+
+        youtubeId: "AMiVAF_tuJ4",
+
+        logo: "logos/CanalCiud.png"
+    },
+
+
+    {
+        name: "El Nueve",
+
+        youtubeId: "e4VpCP8KWLY",
+
+        logo: "logos/ElNueveC.png"
+    },
+
+
+    {
+        name: "Argentina 12",
+
+        youtubeId: "21UP3XoRIBU",
+
+        logo: "logos/Argentina12.jpg"
+    },
+
+    {
+        name: "La Nación +",
+
+        youtubeId: "FEWZjXJ7M0c",
+
+        logo: "logos/LaNac.jpg"
+    },
+
+
+    {
+        name: "Todo Noticias",
+
+        youtubeId: "cb12KmMMDJA",
+
+        logo: "logos/TodoN.png"
+    },
+
+
+    {
+        name: "C5N",
+
+        youtubeId: "j6oh4Kqz3UM",
+
+        logo: "logos/C5N.jpeg"
+    }
+
+];
+
+
+
+/*
+    =========================================
+    ELEMENTOS
+    =========================================
+*/
+
+
+const channelList =
+    document.getElementById("channelList");
+
+
+const player =
+    document.getElementById("player");
+
+
+const channelName =
+    document.getElementById("channelName");
+
+
+
+/*
+    =========================================
+    CREAR CANALES
+    =========================================
+*/
+
+
+channels.forEach((channel, index) => {
+
+
+    const item =
+        document.createElement("div");
+
+
+    item.className = "channel";
+
+
+    item.innerHTML = `
+
+        <img
+            class="channel-logo"
+            src="${channel.logo}"
+            alt="${channel.name}"
+        >
+
+        <div class="channel-name">
+            ${channel.name}
+        </div>
+
+    `;
+
+
+    item.onclick = function () {
+
+        playChannel(index);
+
+    };
+
+
+    channelList.appendChild(item);
+
+
+});
+
+
+
+/*
+    =========================================
+    REPRODUCIR CANAL
+    =========================================
+*/
+
+
+function playChannel(index) {
+
+
+    const channel =
+        channels[index];
+
+
+    /*
+        Quitar selección
+    */
+
+    document
+        .querySelectorAll(".channel")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
+        });
+
+
+    /*
+        Seleccionar canal
+    */
+
+    document
+        .querySelectorAll(".channel")[index]
+        .classList.add("active");
+
+
+    /*
+        Cambiar nombre
+    */
+
+    channelName.textContent =
+        channel.name;
+
+
+    /*
+        Cargar YouTube
+    */
+
+    player.innerHTML = `
+
+        <iframe
+
+            src="https://www.youtube.com/embed/${channel.youtubeId}?autoplay=1"
+
+            title="${channel.name}"
+
+            allow="
+                autoplay;
+                encrypted-media;
+                picture-in-picture
+            "
+
+            allowfullscreen>
+
+        </iframe>
+
+    `;
+
+}
+
+
+
+/*
+    =========================================
+    INICIAR PRIMER CANAL
+    =========================================
+*/
+
+
+playChannel(0);
+
+
+</script>
+
+
+</body>
+
+</html>
